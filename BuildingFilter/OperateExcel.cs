@@ -44,6 +44,7 @@ namespace BuildingFilter
             int i = 2;
             foreach (var item in content)
             {
+                item.Insert(0, (i - 1).ToString());
                 i++;
                 string[] i_arr=item.ToArray();
                 Excel.Range row = worksheet.Range[worksheet.Cells[i, 2], worksheet.Cells[i,2+i_arr.Length-1]];
