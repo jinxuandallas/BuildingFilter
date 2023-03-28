@@ -2,14 +2,19 @@
 using BuildingFilter;
 
 var compath = @"txt\com.txt";
-var streetpaht = @"txt\街道.txt";
+var streetpath = @"txt\街道.txt";
+var buildingaddresspath = @"txt\楼宇地址.txt";
 
-List<string> streets = ReadStreets(streetpaht);
+List<string> streets = ReadStreets(streetpath);
+Dictionary<string, string> buildingAddress = ReadBuildingAddress(buildingaddresspath);
+
 StreamReader sr = new StreamReader(compath);
 
 string? line = sr.ReadLine();
 bool greater, createDate;
 List<List<string>> content = new List<List<string>>();
+//content.Add(new string[] { "企业名称", "企业注册地", "所在楼宇", "企业注册资本(万元)", "统一社会信用代码", "联系电话", "行业门类", "所属管辖街道" }.ToList());
+
 while (line != null)
 {
     List<string> item = new List<string>();
@@ -62,6 +67,16 @@ Console.WriteLine();
 foreach (string s in streets)
     Console.WriteLine(s);
 
+string buildingadd;
+//添加楼宇信息
+foreach (List<string> item in content)
+{
+    buildingadd = GetItemAddress(item);
+    item.Insert(2, buildingAddress.ContainsKey(buildingadd) ? buildingAddress[buildingadd] : "");
+}
+
+content.Insert(0, new string[] { "企业名称", "企业注册地", "所在楼宇", "企业注册资本(万元)", "统一社会信用代码", "联系电话", "成立日期", "行业门类", "所属管辖街道" }.ToList());
+
 OperateExcel oe = new OperateExcel();
 //oe.test();
 oe.OperateContent(content);
@@ -80,4 +95,29 @@ List<string> ReadStreets(string path)
     sr.Close();
     return result;
 
+}
+
+Dictionary<string, string> ReadBuildingAddress(string path)
+{
+    Dictionary<string, string> result = new Dictionary<string, string>();
+
+    StreamReader sr = new StreamReader(path);
+    string? line = sr.ReadLine();
+    while (line != null)
+    {
+        string[] item = line.Split('，');
+        result.Add(item[1].Trim(), item[0].Trim());
+        line = sr.ReadLine();
+    }
+    sr.Close();
+
+    return result;
+
+}
+
+string GetItemAddress(List<string> item)
+{
+    int qu = item[1].IndexOf("区");
+    int hao = item[1].IndexOf("号", qu);
+    return hao < qu ? "" : item[1].Substring(qu + 1, hao - qu).Replace(" ", "");
 }
