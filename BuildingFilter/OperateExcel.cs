@@ -127,14 +127,14 @@ namespace BuildingFilter
                 i = 0;
             foreach (var item in content)
             {
-
-                i++;
                 //添加序号
+                i++;
                 item.Insert(0, i.ToString());
 
                 string[] i_arr = item.ToArray();
-                Excel.Range row = worksheet.Range[worksheet.Cells[i, 2], worksheet.Cells[i , 2 + i_arr.Length - 1]];
+                Excel.Range row = worksheet.Range[worksheet.Cells[worksheet.UsedRange.Rows.Count+1, 2], worksheet.Cells[worksheet.UsedRange.Rows.Count + 1, 2 + i_arr.Length - 1]];
                 row.Value2 = i_arr;
+                
             }
             //StreamReader streamReader = new StreamReader(content);
 
@@ -167,7 +167,7 @@ namespace BuildingFilter
 
 
             //设置列宽
-            int[] width = new int[] { 3, 40, 50, 20, 20, 30, 15, 12, 30, 15 };
+            int[] width = new int[] { 5, 40, 50, 20, 20, 30, 12, 30, 15, 15 };
             for (int j = 2; j < 12; j++)
             {
                 range = (Excel.Range)worksheet.Cells[5, j];

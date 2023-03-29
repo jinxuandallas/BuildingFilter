@@ -11,9 +11,10 @@ Dictionary<string, string> buildingAddress = ReadBuildingAddress(buildingaddress
 StreamReader sr = new StreamReader(compath);
 
 string? line = sr.ReadLine();
-bool greater, createDate;
+bool greater;
 List<List<string>> content = new List<List<string>>();
 //content.Add(new string[] { "企业名称", "企业注册地", "所在楼宇", "企业注册资本(万元)", "统一社会信用代码", "联系电话", "行业门类", "所属管辖街道" }.ToList());
+DateTime createDate=DateTime.Now;
 
 while (line != null)
 {
@@ -21,10 +22,15 @@ while (line != null)
         break;
     List<string> item = new List<string>();
 
+    if(line.Contains("新注册企业共"))
+    {
+        string[] t=line.Split('，');
+        createDate = DateTime.Parse(t[0]);
+    }
     if (line.Contains("："))
     {
         line = line.Trim('。');//去掉句号
-        greater = createDate = false;
+        greater = false;
         string[] single = line.Split('，');
 
         foreach (string s in single)
@@ -42,8 +48,9 @@ while (line != null)
                     greater = true;
             }
 
-            if (kv[0].Contains("成立日期"))
-                createDate = true;
+            //新增企业没有成立日期
+            //if (kv[0].Contains("成立日期"))
+            //    createDate = true;
 
             item.Add(kv[1].Trim());
         }
@@ -52,8 +59,9 @@ while (line != null)
 
         if (greater && streets.Contains(item[item.Count - 1]))//在10个街道中
         {
-            if (!createDate)//如果没有成立日期则填充空白
-                item.Insert(item.Count - 2, "");
+            //if (!createDate)//如果没有成立日期则填充空白
+            //    item.Insert(item.Count - 2, "");
+            item.Add(createDate.ToString("d"));
             content.Add(item);
         }
 
