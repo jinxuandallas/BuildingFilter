@@ -17,6 +17,8 @@ List<List<string>> content = new List<List<string>>();
 
 while (line != null)
 {
+    if (line.Contains("注销企业共"))
+        break;
     List<string> item = new List<string>();
 
     if (line.Contains("："))
@@ -75,11 +77,13 @@ foreach (List<string> item in content)
     item.Insert(2, buildingAddress.ContainsKey(buildingadd) ? buildingAddress[buildingadd] : "");
 }
 
-content.Insert(0, new string[] { "企业名称", "企业注册地", "所在楼宇", "企业注册资本(万元)", "统一社会信用代码", "联系电话", "成立日期", "行业门类", "所属管辖街道" }.ToList());
+///累加不需要添加表头
+//content.Insert(0, new string[] { "企业名称", "企业注册地", "所在楼宇", "企业注册资本(万元)", "统一社会信用代码", "联系电话", "成立日期", "行业门类", "所属管辖街道" }.ToList());
 
 OperateExcel oe = new OperateExcel();
 //oe.test();
-oe.OperateContent(content);
+//oe.OperateContent(content);
+oe.OperateContentAccumulation(content);
 
 
 List<string> ReadStreets(string path)

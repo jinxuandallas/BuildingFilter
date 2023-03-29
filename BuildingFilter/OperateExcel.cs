@@ -22,11 +22,6 @@ namespace BuildingFilter
         }
 
 
-
-
-
-
-
         [DllImport("user32.dll", SetLastError = true)]
         static extern int GetWindowThreadProcessId(IntPtr hwnd, out int processid);
         public void OperateContent(List<List<string>> content)
@@ -85,7 +80,7 @@ namespace BuildingFilter
             for (int j = 2; j < 12; j++)
             {
                 range = (Excel.Range)worksheet.Cells[5, j];
-                range.ColumnWidth = (object)width[j-2];
+                range.ColumnWidth = (object)width[j - 2];
             }
 
             workbook.Save();
@@ -110,6 +105,90 @@ namespace BuildingFilter
             //myApp = null;
         }
 
+
+
+        public void OperateContentAccumulation(List<List<string>> content)
+        {
+            myApp = new Excel.Application();
+            Excel.Workbook workbook = myApp.Workbooks.Open(excelPath);
+            Excel.Worksheet worksheet = (Excel.Worksheet)workbook.Worksheets[1];
+
+
+            //Excel.Range range = (Excel.Range)worksheet.Cells[1, 5];
+            //range.HorizontalAlignment = Microsoft.Office.Core.XlHAlign.xlHAlignCenter;
+            //range.Value = DateTime.Now.Date.ToString("yyyy年MM月dd日");
+            //range.Font.Size = 30;
+
+            int usedrows = worksheet.UsedRange.Rows.Count;
+            Excel.Range range = (Excel.Range)worksheet.Cells[usedrows, 2];
+            string? num = range.Text.ToString();
+            int i;
+            if (!int.TryParse(num, out i))
+                i = 0;
+            foreach (var item in content)
+            {
+
+                i++;
+                //添加序号
+                item.Insert(0, i.ToString());
+
+                string[] i_arr = item.ToArray();
+                Excel.Range row = worksheet.Range[worksheet.Cells[i, 2], worksheet.Cells[i , 2 + i_arr.Length - 1]];
+                row.Value2 = i_arr;
+            }
+            //StreamReader streamReader = new StreamReader(content);
+
+            //string? line = streamReader.ReadLine();
+            //while (line != null)
+            //{
+            //    if (line.Contains("："))
+            //    {
+
+            //    }
+            //    line = streamReader.ReadLine();
+
+            //}
+
+            //streamReader.Close();
+
+
+            //画边框
+            range = worksheet.Range[worksheet.Cells[usedrows, 2], worksheet.Cells[worksheet.UsedRange.Rows.Count, 11]];
+            range.Borders.Weight = 2;
+            range.Borders.LineStyle = XlLineStyle.xlContinuous;
+
+            //for(int j=0;j<14;j++)
+            //{
+            //    range= (Excel.Range)worksheet.Cells[20+j*2, 5];
+
+            //    range.Borders.Weight = 2;
+            //    range.Borders.LineStyle = j;
+            //}
+
+
+            //设置列宽
+            int[] width = new int[] { 3, 40, 50, 20, 20, 30, 15, 12, 30, 15 };
+            for (int j = 2; j < 12; j++)
+            {
+                range = (Excel.Range)worksheet.Cells[5, j];
+                //range.EntireColumn.AutoFit();
+                range.ColumnWidth = (object)width[j - 2];
+            }
+
+            workbook.Save();
+            workbook.Close();
+
+            myApp.Quit();
+
+            int pid;
+
+            GetWindowThreadProcessId(new IntPtr(myApp.Hwnd), out pid);
+
+            System.Diagnostics.Process.GetProcessById(pid).Kill();
+
+
+
+        }
         public void test()
         {
             myApp = new Excel.Application();
