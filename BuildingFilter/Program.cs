@@ -41,7 +41,9 @@ while (line != null)
                 continue;
             if (kv[0].Contains("企业注册资本"))
             {
-                float capital = float.Parse(kv[1]);
+                float num;
+                float.TryParse(kv[1], out num);
+                float capital = num;
                 if (capital < 500)
                     break;
                 else
