@@ -22,9 +22,13 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="EverythingAPI">
+      <HintPath>..\..\jinxuandallas\EverythingAPI\EverythingAPI\bin\Debug\net6.0\EverythingAPI.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Vbe.Interop">
       <HintPath>..\..\..\..\..\..\..\Windows\assembly\GAC_MSIL\Microsoft.Vbe.Interop\15.0.0.0__71e9bce111e9429c\Microsoft.Vbe.Interop.dll</HintPath>
       <Private>True</Private>

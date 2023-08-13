@@ -1,5 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using BuildingFilter;
+using Everything;
+using System.Text;
 
 var compath = @"txt\com.txt";
 var streetpath = @"txt\街道.txt";
@@ -8,9 +10,15 @@ var buildingaddresspath = @"txt\楼宇地址.txt";
 List<string> streets = ReadStreets(streetpath);
 Dictionary<string, string> buildingAddress = ReadBuildingAddress(buildingaddresspath);
 
-StreamReader sr = new StreamReader(compath);
+//StreamReader sr = new StreamReader(compath);
 
+//string? line = sr.ReadLine();
+
+string txt = ConvertToTxt(GetNewestCompanyFile());
+StringReader sr = new StringReader(txt);
 string? line = sr.ReadLine();
+
+
 bool greater;
 List<List<string>> content = new List<List<string>>();
 //content.Add(new string[] { "企业名称", "企业注册地", "所在楼宇", "企业注册资本(万元)", "统一社会信用代码", "联系电话", "行业门类", "所属管辖街道" }.ToList());
@@ -134,4 +142,31 @@ string GetItemAddress(List<string> item)
     int qu = item[1].IndexOf("区");
     int hao = item[1].IndexOf("号", qu);
     return hao < qu ? "" : item[1].Substring(qu + 1, hao - qu).Replace(" ", "");
+}
+
+string ConvertToTxt(string path)
+{
+    Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+    FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
+    Encoding encode = System.Text.Encoding.GetEncoding("gb2312");
+    StreamReader sr = new StreamReader(fs, encode);
+
+    string txt = sr.ReadToEnd().Replace("<strong>", string.Empty).Replace(@"</strong>", string.Empty).Replace(@"<br />", "\n").Replace("<html><head></head><body>", string.Empty).Replace("</body></html>", string.Empty);
+
+    //注册企业
+    //string aa= sr.ReadToEnd();
+    //return aa.IndexOf("注册企业").ToString();
+    //return aa;
+
+    return txt;
+}
+
+string GetNewestCompanyFile()
+{
+    EverythingAPI everythingAPI = new EverythingAPI();
+    var results = everythingAPI.SearchSortByDate("备注  html !lnk", 1);
+    string result=string.Empty;
+    foreach (var item in results)
+        result = item.ToString();
+    return result.Split('\t')[0];
 }
