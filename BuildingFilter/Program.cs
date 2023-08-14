@@ -3,7 +3,7 @@ using BuildingFilter;
 using Everything;
 using System.Text;
 
-var compath = @"txt\com.txt";
+//var compath = @"txt\com.txt";
 var streetpath = @"txt\街道.txt";
 var buildingaddresspath = @"txt\楼宇地址.txt";
 
